@@ -194,11 +194,49 @@ class ModalOperatorPanel(bpy.types.Panel):
             box.label(text='No (active) modal operators to display', icon='RADIOBUT_OFF')
 
 
+def update_helper_category_name(self, _context):
+    """Unregisters all panels, sets preferences category name, and re-registers panels.
+
+    :param self: OperatorProperties instance, in this case, preferences properties
+    :param _context: Blender context
+    """
+    panel_idname = 'VIEW3D_PT_modal_ops'
+    if not hasattr(bpy.types, panel_idname):
+        return
+
+    try:
+        bpy.utils.unregister_class(getattr(bpy.types, panel_idname))
+
+        ModalOperatorPanel.bl_category = self.category_name
+        bpy.utils.register_class(ModalOperatorPanel)
+    except Exception:
+        raise RuntimeError('Panel failed to re-register:' + panel_idname)
+
+
+
+class SaveYourAutosavePreferences(bpy.types.AddonPreferences):
+    bl_idname = __package__
+
+    category_name: bpy.props.StringProperty(
+        name='Category',
+        description='Category the add-on panel will be listed under.',
+        default='Save Your Autosave',
+        update=update_helper_category_name
+    )
+    """Category the panel will be under."""
+
+    def draw(self, _context):
+        layout = self.layout
+        layout.prop(self, 'category_name')
+
+
+
 cls_to_register = [
     OpenFileInEditor,
     RemoveModalOperator,
     OpenFileDirectory,
     ModalOperatorPanel,
+    SaveYourAutosavePreferences,
 ]
 
 

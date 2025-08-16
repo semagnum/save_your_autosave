@@ -144,7 +144,7 @@ class ModalOperatorPanel(bpy.types.Panel):
             else:
                 autosave_label = f'{round(delta // 60)} minutes ago'
 
-            icon = 'ERROR' if (delta // 60) > context.preferences.filepaths.auto_save_time else 'INFO'
+            icon = 'ERROR' if (delta // 60) >= context.preferences.filepaths.auto_save_time else 'INFO'
             layout.label(text=f'Autosaved {autosave_label}', icon=icon)
         else:
             layout.label(text='No autosave during this session', icon='INFO')
